@@ -2,59 +2,42 @@
 <html lang="sr">
 <head>
     <meta charset="UTF-8">
-    <title>Data.gov.rs API - Sve Organizacije</title>
+    <title>Specifična Organizacija - Data.gov.rs</title>
     <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
     <script>
         $(document).ready(function() {
             const apiKey = 'eyJhbGciOiJIUzUxMiJ9.eyJ1c2VyIjoiNjc3N2NhY2NmOGNiMGZiNzhhODNkODFhIiwidGltZSI6MTczNTkwNDA3Mi41Njg5ODI4fQ.jtSiVLAS6ZPuZxUuBPjSq9ZJNvT5-56QPj0fbBMU13EIKjhF5nIjfuI_DoVwtP2l5qi7IIuBXLltnsSNBgZgrw'; // Zameni sa svojim API ključem
-            const apiUrl = 'https://data.gov.rs/api/1/organizations/';
-            const $list = $('#organization-list');
+            const organizationId = '5c3f400fcbe3c8656e506001'; // ID specifične organizacije
+            const apiUrl = `https://data.gov.rs/api/1/organizations/${organizationId}/`;
 
-            let page = 1;
-            let allOrganizations = [];
-
-            function fetchOrganizations() {
-                $.ajax({
-                    url: apiUrl,
-                    headers: {
-                        'X-API-KEY': apiKey
-                    },
-                    method: 'GET',
-                    data: {
-                        page: page,
-                        page_size: 20 // Broj organizacija po stranici
-                    },
-                    success: function(data) {
-                        allOrganizations = allOrganizations.concat(data.data);
-
-                        // Dodavanje trenutne stranice organizacija u listu
-                        data.data.forEach(function(org) {
-                            $list.append(`<li>${org.name}</li>`);
-                        });
-
-                        // Provera da li postoji sledeća stranica
-                        if (data.next) {
-                            page++;
-                            fetchOrganizations(); // Rekurzivno pozivanje za sledeću stranicu
-                        } else {
-                            console.log('Preuzete sve organizacije:', allOrganizations);
-                        }
-                    },
-                    error: function(xhr, status, error) {
-                        console.error('Greška pri dohvatanju podataka:', error);
-                    }
-                });
-            }
-
-            // Početno preuzimanje
-            fetchOrganizations();
+            $.ajax({
+                url: apiUrl,
+                headers: {
+                    'X-API-KEY': apiKey
+                },
+                method: 'GET',
+                success: function(data) {
+                    // Prikaz informacija o organizaciji
+                    $('#organization-info').html(`
+                        <h2>${data.name}</h2>
+                        <p><strong>ID:</strong> ${data.id}</p>
+                        <p><strong>Opis:</strong> ${data.description || 'Nema opisa'}</p>
+                        <p><strong>URL:</strong> <a href="${data.url}" target="_blank">${data.url}</a></p>
+                    `);
+                },
+                error: function(xhr, status, error) {
+                    console.error('Greška pri dohvatanju podataka:', error);
+                    $('#organization-info').html('<p>Došlo je do greške pri dohvatanju podataka.</p>');
+                }
+            });
         });
     </script>
 </head>
 <body>
-    <h1>Sve Organizacije sa Data.gov.rs</h1>
-    <ul id="organization-list">
-        <!-- Organizacije će biti ubačene ovde -->
-    </ul>
+    <h1>Detalji Organizacije</h1>
+    <div id="organization-info">
+        <!-- Informacije o organizaciji će biti prikazane ovde -->
+    </div>
 </body>
 </html>
+                          
