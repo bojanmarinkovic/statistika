@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="sr">
+<head>
+    <meta charset="UTF-8">
+    <title>Data.gov.rs API Example</title>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const apiKey = 'eyJhbGciOiJIUzUxMiJ9.eyJ1c2VyIjoiNjc3N2NhY2NmOGNiMGZiNzhhODNkODFhIiwidGltZSI6MTczNTkwNDA3Mi41Njg5ODI4fQ.jtSiVLAS6ZPuZxUuBPjSq9ZJNvT5-56QPj0fbBMU13EIKjhF5nIjfuI_DoVwtP2l5qi7IIuBXLltnsSNBgZgrw'; // Replace with your actual API key
+            const apiUrl = 'https://data.gov.rs/api/1/organizations/?page_size=5';
+
+            fetch(apiUrl, {
+                headers: {
+                    'X-API-KEY': apiKey
+                }
+            })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Network response was not ok');
+                }
+                return response.json();
+            })
+            .then(data => {
+                const organizations = data.data;
+                const list = document.getElementById('organization-list');
+                organizations.forEach(org => {
+                    const listItem = document.createElement('li');
+                    listItem.textContent = org.name;
+                    list.appendChild(listItem);
+                });
+            })
+            .catch(error => {
+                console.error('There was a problem with the fetch operation:', error);
+            });
+        });
+    </script>
+</head>
+<body>
+    <h1>Organizations from Data.gov.rs</h1>
+    <ul id="organization-list">
+        <!-- Organization names will be inserted here -->
+    </ul>
+</body>
+</html>
